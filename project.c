@@ -5,7 +5,35 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-//This is jacob testing push
+	char inputs = {000, 001, 010, 110, 111};
+				 //AND,  OR, ADD, SUB, SET-LT
+	//I got the above values from a website
+	int caseNum;
+	for(int i = 0; i < 5; i++){
+		if(ALUControl == inputs[i]){
+			caseNum = i;
+			break;
+		}
+	}
+	switch(caseNum){
+		case 0://AND
+			*ALUresult = A & B;
+			return;
+			break;
+		case 1://OR
+			*ALUresult = A & B;
+			return;
+			break;
+		case 2://ADD
+		
+			break;
+		case 3://SUB
+
+			break;
+		case 4://SET-LT
+
+			break;
+	}
 }
 
 /* instruction fetch */
