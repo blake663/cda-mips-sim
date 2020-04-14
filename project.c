@@ -5,7 +5,7 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-
+//This is jacob testing push
 }
 
 /* instruction fetch */
