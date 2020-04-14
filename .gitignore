@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.db
+/.vs/cda-mips-sim/v16/Browse.VC.opendb
+/.vs/cda-mips-sim/v16/ipch/AutoPCH/ea78ebd131e3af6b/PROJECT.ipch
+/.vs/ProjectSettings.json
+/.vs/slnx.sqlite
