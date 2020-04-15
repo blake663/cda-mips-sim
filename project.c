@@ -5,14 +5,14 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-	//case 6/7 are a bit confusing??
+	//What is the difference between case 5/6??
 	*Zero = 0;//Assume the output is not zero
 	switch(ALUControl){
 		case 0://ADD
 			*ALUresult = A + B;
 			if(*ALUresult == 0)
 				*Zero = 0;
-			return;break;
+			break;
 		case 1://SUB
 			*ALUresult = A - B;
 			if(*ALUresult == 0)
@@ -40,14 +40,15 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 			if(*ALUresult == 0)
 				*Zero = 0;
 			break;
-		case 6://shift left?
+		case 6://shift left by 16 bits
 			if(B == 0){
 				*ALUresult = 0;
 				*Zero = 1;
 			}else
 				*ALUresult = (B<<16);
 			break;
-		case 7://R-tpye instruction
+		case 7://Inverse A
+			*ALUresult = ~A;
 			break;
 
 	}
