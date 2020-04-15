@@ -5,44 +5,51 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-	char inputs = {000, 001, 010, 110, 111};
-				 //AND,  OR, ADD, SUB, SET-LT
-	//I got the above values from a website
-	int caseNum;
-	for(int i = 0; i < 5; i++){
-		if(ALUControl == inputs[i]){
-			caseNum = i;
-			break;
-		}
-	}
+	//case 6/7 are a bit confusing??
 	*Zero = 0;//Assume the output is not zero
-	switch(caseNum){
-		case 0://AND
-			*ALUresult = A & B;
-			if(ALUresult == 0)
-				*Zero = 1;
-			return;break;
-		case 1://OR
-			*ALUresult = A | B;
-			if(*ALUresult == 0)
-				*Zero = 0;
-			return;break;
-		case 2://ADD
+	switch(ALUControl){
+		case 0://ADD
 			*ALUresult = A + B;
 			if(*ALUresult == 0)
 				*Zero = 0;
 			return;break;
-		case 3://SUB
+		case 1://SUB
 			*ALUresult = A - B;
 			if(*ALUresult == 0)
 				*Zero = 0;
-			return;break;
-		case 4://SET-LT
-			if(A < B) 
+			break;
+		case 2://SET-LT
+			if(A < B)
 				*ALUresult = 1;
 			else 
 				*ALUresult = 0;
-			return;break;
+			break;
+		case 3://SET-LT unsigned
+			if(A < B)
+				*ALUresult = 1;
+			else 
+				*ALUresult = 0;
+			break;
+		case 4://AND
+			*ALUresult = A & B;
+			if(ALUresult == 0)
+				*Zero = 1;
+			break;
+		case 5://OR
+			*ALUresult = A | B;
+			if(*ALUresult == 0)
+				*Zero = 0;
+			break;
+		case 6://shift left?
+			if(B == 0){
+				*ALUresult = 0;
+				*Zero = 1;
+			}else
+				*ALUresult = (B<<16);
+			break;
+		case 7://R-tpye instruction
+			break;
+
 	}
 }
 
@@ -91,8 +98,16 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+	//stores the most left bit of offset
+	int leftBit = offset & 0x00008000;
+	
+	//if left bit is a 1, fill in with 1's
+	if(leftBit == 1)
+		offset += 0xFFFF0000;
+	*extended_value = offset;
+	return;
 }
+
 
 /* ALU operations */
 /* 10 Points */
