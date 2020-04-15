@@ -66,7 +66,6 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 
 }
 
-/*hello 
 
 /* instruction decode */
 /* 15 Points */
