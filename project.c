@@ -5,7 +5,7 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-	char inputs = {000, 001, 010, 110, 111};
+	char inputs[] = {000, 001, 010, 110, 111};
 				 //AND,  OR, ADD, SUB, SET-LT
 	//I got the above values from a website
 	int caseNum;
