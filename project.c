@@ -125,7 +125,7 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 		*memdata = ALUresult;
 	}
 
-
+	//missing HALT check
 
 }
 
