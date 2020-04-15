@@ -15,24 +15,34 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 			break;
 		}
 	}
+	*Zero = 0;//Assume the output is not zero
 	switch(caseNum){
 		case 0://AND
 			*ALUresult = A & B;
-			return;
-			break;
+			if(ALUresult == 0)
+				*Zero = 1;
+			return;break;
 		case 1://OR
-			*ALUresult = A & B;
-			return;
-			break;
+			*ALUresult = A | B;
+			if(*ALUresult == 0)
+				*Zero = 0;
+			return;break;
 		case 2://ADD
-		
-			break;
+			*ALUresult = A + B;
+			if(*ALUresult == 0)
+				*Zero = 0;
+			return;break;
 		case 3://SUB
-
-			break;
+			*ALUresult = A - B;
+			if(*ALUresult == 0)
+				*Zero = 0;
+			return;break;
 		case 4://SET-LT
-
-			break;
+			if(A < B) 
+				*ALUresult = 1;
+			else 
+				*ALUresult = 0;
+			return;break;
 	}
 }
 
