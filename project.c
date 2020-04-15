@@ -5,40 +5,51 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
+	//case 6/7 are a bit confusing??
 	*Zero = 0;//Assume the output is not zero
 	switch(ALUControl){
-		case 0://AND
-			*ALUresult = A & B;
-			if(ALUresult == 0)
-				*Zero = 1;
+		case 0://ADD
+			*ALUresult = A + B;
+			if(*ALUresult == 0)
+				*Zero = 0;
 			return;break;
 		case 1://SUB
 			*ALUresult = A - B;
 			if(*ALUresult == 0)
 				*Zero = 0;
+			break;
 		case 2://SET-LT
 			if(A < B)
 				*ALUresult = 1;
 			else 
 				*ALUresult = 0;
-			return;break;
-		case 2://SET-LT
+			break;
+		case 3://SET-LT unsigned
 			if(A < B)
 				*ALUresult = 1;
 			else 
 				*ALUresult = 0;
-			return;break;
-		case 1://OR
+			break;
+		case 4://AND
+			*ALUresult = A & B;
+			if(ALUresult == 0)
+				*Zero = 1;
+			break;
+		case 5://OR
 			*ALUresult = A | B;
 			if(*ALUresult == 0)
 				*Zero = 0;
-			return;break;
-		case 2://ADD
-			*ALUresult = A + B;
-			if(*ALUresult == 0)
-				*Zero = 0;
-			return;break;
-			return;break;
+			break;
+		case 6://shift left?
+			if(B == 0){
+				*ALUresult = 0;
+				*Zero = 1;
+			}else
+				*ALUresult = (B<<16);
+			break;
+		case 7://R-tpye instruction
+			break;
+
 	}
 }
 
