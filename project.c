@@ -5,7 +5,6 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-	//What is the difference between case 5/6??
 	*Zero = 0;//Assume the output is not zero
 	switch(ALUControl){
 		case 0://ADD
@@ -19,16 +18,10 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 				*Zero = 0;
 			break;
 		case 2://SET-LT
-			if(A < B)
-				*ALUresult = 1;
-			else 
-				*ALUresult = 0;
+			*ALUresult = (A < B);
 			break;
 		case 3://SET-LT unsigned
-			if(A < B)
-				*ALUresult = 1;
-			else 
-				*ALUresult = 0;
+			*ALUresult = (A < B);
 			break;
 		case 4://AND
 			*ALUresult = A & B;
