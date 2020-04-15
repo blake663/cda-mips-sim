@@ -106,9 +106,32 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 
 /* ALU operations */
 /* 10 Points */
+/* Jacob still working */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-
+	//Illegal operation check
+	//Return 1 if a halt condition occurs; otherwise, return 0
+	if(ALUOp > 7) return 1;
+	
+	//set Parameters for A, B, and ALUControl
+	unsigned B;
+	char ALUcontrol;
+	
+	//Assumming ALUsrc = 1 means to read extended_value based on modules
+	if(ALUSrc == 1) 
+		B = extended_value;
+	else 
+		B = data2;
+	
+	//the function preformed (ALUcontrol) is based on funct and ALUop
+	if (ALUOp == 7)
+		ALUcontrol = funct;
+	else
+		ALUcontrol = ALUOp;
+	
+	//in the end, call ALU function 
+	ALU(data1, B, ALUcontrol, *ALUresult, *Zero);
+	return 0;
 }
 
 /* Read / Write Memory */
