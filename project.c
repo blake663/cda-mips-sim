@@ -86,8 +86,16 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+	//stores the most left bit of offset
+	int leftBit = offset & 0x00008000;
+	
+	//if left bit is a 1, fill in with 1's
+	if(leftBit == 1)
+		offset += 0xFFFF0000;
+	*extended_value = offset;
+	return;
 }
+
 
 /* ALU operations */
 /* 10 Points */
