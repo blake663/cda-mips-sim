@@ -42,7 +42,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
 	if (PC % 4)
 		return 1;
-
+	 
 	*instruction = Mem[PC/4];
 	return 0;
 }
@@ -52,6 +52,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
+	*r1 = (instruction >> 20) && 0b11111; // instruction [25-21]
 
 }
 
