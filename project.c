@@ -141,25 +141,31 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 
 	if (MemWrite == 1 )
 	{
-		if (ALUresult > 32)
+		if (ALUresult % 4 != 0)
 		{
 			return 1;
 		}
 
 		else
 		{
-			Mem[ALUresult] = data2;
+			Mem[ALUresult >> 2] = data2;
 		}
 	}
 
 	if (MemRead == 1)
 	{
-		*memdata = ALUresult;
+		if (ALUresult % 4 != 0)
+		{
+			return 1;
+		}
+
+		else
+		{
+			*memdata = Mem[ALUresult >> 2];
+		}
 	}
 
 	return 0;
-
-	//missing HALT check
 
 }
 
