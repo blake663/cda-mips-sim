@@ -141,6 +141,7 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 
 	if (MemWrite == 1 )
 	{
+		/*Hault check*/
 		if (ALUresult % 4 != 0)
 		{
 			return 1;
@@ -154,6 +155,7 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 
 	if (MemRead == 1)
 	{
+		/*Hault check*/
 		if (ALUresult % 4 != 0)
 		{
 			return 1;
