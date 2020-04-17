@@ -106,30 +106,29 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 
 /* ALU operations */
 /* 10 Points */
-/* Jacob still working */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-	//Illegal operation check
-	//Return 1 if a halt condition occurs; otherwise, return 0
+	// Illegal operation check
+	// Return 1 if a halt condition occurs; otherwise, return 0
 	if(ALUOp > 7) return 1;
 	
-	//set Parameters for A, B, and ALUControl
+	// set Parameters for A, B, and ALUControl
 	unsigned B;
 	char ALUcontrol;
 	
-	//Assumming ALUsrc = 1 means to read extended_value based on modules
+	// ALUsrc = 1 means to read extended_value based on modules
 	if(ALUSrc == 1) 
 		B = extended_value;
 	else 
 		B = data2;
 	
-	//the function preformed (ALUcontrol) is based on funct and ALUop
+	// the function preformed (ALUcontrol) is based on funct and ALUop
 	if (ALUOp == 7)
 		ALUcontrol = funct;
 	else
 		ALUcontrol = ALUOp;
 	
-	//in the end, call ALU function 
+	// in the end, call ALU function 
 	ALU(data1, B, ALUcontrol, *ALUresult, *Zero);
 	return 0;
 }
@@ -215,7 +214,6 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
-
 	*PC = *PC + 4;
 
 	if (Branch == 1 && Zero)
@@ -230,6 +228,5 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
 		/*THIS IS WHAT THE PROJECT DETAILS POWERPOINT SAYS ABOUT THE JUMP IN THIS FUNCTION "Jump: Left shift bits of jsec by 2 and use upper 4 bits of PC" BUT I AM NOT SURE HOW TO "USE THE UPPER 4 BITS OF PC*/
 
 	}
-
 }
 
