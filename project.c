@@ -72,12 +72,43 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 	*jsec = instruction       && 0b11111; // instruction [25-0]
 }
 
+	
 
 /* instruction decode */
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
+	// If halt occurs return 1
+	// Else return 0
+	controls->ALUOp;
+	controls->ALUSrc;
+	controls->Branch;
+	controls->Jump;
+	controls->MemRead;
+	controls->MemtoReg;
+	controls->MemWrite;
+	controls->RegDst;
+	controls->RegWrite;
+	//R-type instruction
+	if(op == 0)
+	{
+		controls->RegDst;
+		controls->RegWrite;
+	}
+	// J-type instruction
+	if((op == 0b000010 || op == 0b000011)
+	{
+		(*controls).Jump = 1;
+	}
+	// Branch
+	// MemRead
+	// MemtoReg
+	// ALUOp
+	// MemWrite
+	// ALUSrc
+	// RegWrite
 
+	
 }
 
 /* Read Register */
