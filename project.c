@@ -223,7 +223,7 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
 
 	else if (Jump == 1)
 	{
-		*PC = (jsec << 2); /* IT SHOULD BE: PC = PC[31-28] : Offset << 2 BUT I AM NOT SURE HOW TO DO "PC[31-28] (WHICH ARE THE 4 MOST SIGNIFICANT BITS FROM THE CURRENT PC) AND I ALSO DON'T KNOW WHAT ":" MEANS*/
+		*PC = (jsec << 2) + *PC; /* IT SHOULD BE: PC = PC[31-28] : Offset << 2 BUT I AM NOT SURE HOW TO DO "PC[31-28] (WHICH ARE THE $ MOST SIGNIFICANT BITS FROM THE CURRENT PC) AND I ALSO DON'T KNOW WHAT ":" MEANS*/
 
 		/*THIS IS WHAT THE PROJECT DETAILS POWERPOINT SAYS ABOUT THE JUMP IN THIS FUNCTION "Jump: Left shift bits of jsec by 2 and use upper 4 bits of PC" BUT I AM NOT SURE HOW TO "USE THE UPPER 4 BITS OF PC*/
 
