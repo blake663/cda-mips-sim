@@ -80,35 +80,44 @@ int instruction_decode(unsigned op,struct_controls *controls)
 {
 	// If halt occurs return 1
 	// Else return 0
-	controls->ALUOp;
+
+	// All the fields for control
+	controls->ALUOp = 3;// L/S => 00, Beq => 01, Arithmetic => 1X
 	controls->ALUSrc;
-	controls->Branch;
-	controls->Jump;
+	//controls->Branch;
+	//controls->Jump;
 	controls->MemRead;
 	controls->MemtoReg;
 	controls->MemWrite;
 	controls->RegDst;
 	controls->RegWrite;
+
+
 	//R-type instruction
-	if(op == 0)
+	if(op == 0b000000)
 	{
-		controls->RegDst;
-		controls->RegWrite;
+		controls->RegDst = 1; 
+		controls->RegWrite = 1;
 	}
 	// J-type instruction
 	if((op == 0b000010 || op == 0b000011)
 	{
-		(*controls).Jump = 1;
+		control->Jump = 1;
 	}
-	// Branch
-	// MemRead
-	// MemtoReg
-	// ALUOp
-	// MemWrite
-	// ALUSrc
-	// RegWrite
+	// I-type instruction
+	else
+	{
+		// if op == XXX1XX branch
+		if((op >> 2) == 1)
+			control->Branch = 1;
+		
 
-	
+
+
+
+
+
+	}
 }
 
 /* Read Register */
@@ -140,27 +149,46 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
 	// Illegal operation check
-	// Return 1 if a halt condition occurs; otherwise, return 0
-	if(ALUOp > 7) return 1;
+	if(ALUOp > 4) return 1;
 	
 	// set Parameters for A, B, and ALUControl
+	unsigned A = data1;
 	unsigned B;
 	char ALUcontrol;
 	
-	// ALUsrc = 1 means to read extended_value based on modules
+	// ALUsrc = 1 => read extended_value
 	if(ALUSrc == 1) 
 		B = extended_value;
 	else 
 		B = data2;
 	
-	// the function preformed (ALUcontrol) is based on funct and ALUop
-	if (ALUOp == 7)
-		ALUcontrol = funct;
+	// Add for Load / Store
+	if(ALUOp == 0)
+		ALUcontrol = 0b010;
+
+	// Sub for Beq	
+	else if(ALUOp == 1)
+		ALUcontrol = 0b110;
+
+	// look at funct for operation
 	else
-		ALUcontrol = ALUOp;
+		if(     (funct & 0b0000) == 0)
+			ALUcontrol = 0b010;
+
+		else if((funct & 0b0010) == 2)
+			ALUcontrol = 0b110;
+		
+		else if((funct & 0b0100) == 5)
+			ALUcontrol = 0b000;
+		
+		else if((funct & 0b0101) == 6)
+			ALUcontrol = 0b001;
+		
+		else if((funct & 0b1010) == 10)
+			ALUcontrol = 0b111;
 	
 	// in the end, call ALU function 
-	ALU(data1, B, ALUcontrol, *ALUresult, *Zero);
+	ALU(A, B, ALUcontrol, *ALUresult, *Zero);
 	return 0;
 }
 
