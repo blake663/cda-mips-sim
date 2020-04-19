@@ -13,6 +13,8 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 				*Zero = 0;
 			break;
 		case 1://SUB
+			if(B >> 31)
+				B *= -1;
 			*ALUresult = A - B;
 			if(*ALUresult == 0)
 				*Zero = 0;
@@ -102,7 +104,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
 		controls->ALUSrc = 0;
 	}
 	// J-type instruction
-	else if((op == 0b000010 || op == 0b000011)
+	else if(op == 0b000010 || op == 0b000011)
 	{
 		controls->Jump = 1;
 	}
@@ -122,15 +124,15 @@ int instruction_decode(unsigned op,struct_controls *controls)
 		// Store: op == 101XXX || op == 111XXX
 		if((op >> 3) == 5 || (op >> 3) == 7)
 		{
-			controls->memWrite = 1;
-			controls->ALUop = 1;
+			controls->MemWrite = 1;
+			controls->ALUOp = 1;
 		}
 		// Load: op == 100XXX || op == 110XXX 
 		if((op >> 3) == 4 || (op >> 3) == 6)
 		{
-			controls->memRead = 1;
+			controls->MemRead = 1;
 			controls->RegWrite = 1;
-			controls->ALUop = 1;
+			controls->ALUOp = 1;
 		}
 
 	}
@@ -166,8 +168,10 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
 	// Illegal operation check
-	if(ALUOp > 4) return 1;
-	
+	if(ALUOp > 4) 
+	{
+		return 1;
+	}
 	// set Parameters for A, B, and ALUControl
 	unsigned A = data1;
 	unsigned B;
@@ -175,21 +179,28 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 	
 	// ALUsrc = 1 => read extended_value
 	if(ALUSrc == 1) 
+	{
 		B = extended_value;
+	}
 	else 
+	{
 		B = data2;
-	
+	}
+
 	// Add for Load / Store
 	if(ALUOp == 0)
+	{
 		ALUcontrol = 0b010;
-
+	}
 	// Sub for Beq	
 	else if(ALUOp == 1)
+	{
 		ALUcontrol = 0b110;
-
+	}
 	// look at funct for operation
 	else
-		if	   (funct == 0b0000)
+	{
+		if(funct == 0b0000)
 			ALUcontrol = 0b010;
 
 		else if(funct == 0b0010)
@@ -203,10 +214,10 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 		
 		else if(funct == 0b1010)
 			ALUcontrol = 0b111;
-		// We shouldn't get here
+		// funct code wasn't recognized if we get here
 		else
 			return 1;
-		
+	}	
 	
 	// in the end, call ALU function 
 	ALU(A, B, ALUcontrol, *ALUresult, *Zero);
@@ -303,7 +314,9 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
 
 	else if (Jump == 1)
 	{
-		*PC = (*PC | 0xf0000000) | (jsec << 2);
+		*PC = (jsec << 2) + *PC; /* IT SHOULD BE: PC = PC[31-28] : Offset << 2 BUT I AM NOT SURE HOW TO DO "PC[31-28] (WHICH ARE THE $ MOST SIGNIFICANT BITS FROM THE CURRENT PC) AND I ALSO DON'T KNOW WHAT ":" MEANS*/
+
+		/*THIS IS WHAT THE PROJECT DETAILS POWERPOINT SAYS ABOUT THE JUMP IN THIS FUNCTION "Jump: Left shift bits of jsec by 2 and use upper 4 bits of PC" BUT I AM NOT SURE HOW TO "USE THE UPPER 4 BITS OF PC*/
 
 	}
 }
