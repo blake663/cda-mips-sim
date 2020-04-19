@@ -81,17 +81,18 @@ int instruction_decode(unsigned op,struct_controls *controls)
 	// If halt occurs return 1
 	// Else return 0
 
-	// All the fields for control
-	controls->ALUOp = 3;// L/S => 00, Beq => 01, Arithmetic => 1X
+	// All the control signals to account for
+	/*
+	ALUOp = 3;// L/S => 00, Beq => 01, Arithmetic => 1X
 	controls->ALUSrc;
-	//controls->Branch;
-	//controls->Jump;
+	Branch;
+	Jump;
 	controls->MemRead;
 	controls->MemtoReg;
 	controls->MemWrite;
 	controls->RegDst;
 	controls->RegWrite;
-
+	*/
 
 	//R-type instruction
 	if(op == 0b000000)
@@ -100,14 +101,15 @@ int instruction_decode(unsigned op,struct_controls *controls)
 		controls->RegWrite = 1;
 	}
 	// J-type instruction
-	if((op == 0b000010 || op == 0b000011)
+	else if((op == 0b000010 || op == 0b000011)
 	{
 		control->Jump = 1;
+		//control->branch = 1;
 	}
 	// I-type instruction
 	else
 	{
-		// if op == XXX1XX branch
+		// if op == 0001XX branch
 		if((op >> 2) == 1)
 			control->Branch = 1;
 		
@@ -118,6 +120,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
 
 
 	}
+	return 0;
 }
 
 /* Read Register */
@@ -172,20 +175,24 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 
 	// look at funct for operation
 	else
-		if(     (funct & 0b0000) == 0)
+		if	   (funct == 0b0000)
 			ALUcontrol = 0b010;
 
-		else if((funct & 0b0010) == 2)
+		else if(funct == 0b0010)
 			ALUcontrol = 0b110;
 		
-		else if((funct & 0b0100) == 5)
+		else if(funct == 0b0100)
 			ALUcontrol = 0b000;
 		
-		else if((funct & 0b0101) == 6)
+		else if(funct == 0b0101)
 			ALUcontrol = 0b001;
 		
-		else if((funct & 0b1010) == 10)
+		else if(funct == 0b1010)
 			ALUcontrol = 0b111;
+		// We shouldn't get here
+		else
+			return 1;
+		
 	
 	// in the end, call ALU function 
 	ALU(A, B, ALUcontrol, *ALUresult, *Zero);
