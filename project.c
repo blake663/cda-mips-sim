@@ -203,7 +203,7 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-
+	/*If MemWrite = 1, write into memory*/
 	if (MemWrite == 1 )
 	{
 		/*Hault check*/
@@ -217,7 +217,7 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 			Mem[ALUresult >> 2] = data2;
 		}
 	}
-
+	/*If MemRead = 1, read from memory*/
 	if (MemRead == 1)
 	{
 		/*Hault check*/
@@ -241,7 +241,7 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 /* 10 Points */
 void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,char RegWrite,char RegDst,char MemtoReg,unsigned *Reg)
 {
-
+	/*If RegWrite == 1, and MemtoReg ==1, then data coming from memory*/
 	if (RegWrite == 1 && MemtoReg == 1)
 	{
 
@@ -258,6 +258,7 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 
 	}
 
+	/*If RegWrite == 1, and MemtoReg ==0, then data coming from ALU_result*/
 	else if (RegWrite == 1 && MemtoReg == 0)
 	{
 
@@ -280,15 +281,22 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
+
+	/*If the instruction is not a branch, the new PC will be PC + 4*/
 	*PC = *PC + 4;
 
+	/*If the instruction is a branch, we have to calculate the target address*/
+
+	/*Calculate target address: Sign-extend displacement, Shift left 2 places (word displacement), Add to PC + 4*/
 	if (Branch == 1 && Zero)
 	{
 		*PC = (extended_value << 2) + *PC;
 	}
 
+	/*Left shift bits of jsec by 2 and use upper 4 bits of PC*/
 	else if (Jump == 1)
 	{
+		
 		*PC = (*PC | 0xf0000000) | (jsec << 2);
 
 	}
