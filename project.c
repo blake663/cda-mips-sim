@@ -13,6 +13,8 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 				*Zero = 0;
 			break;
 		case 1://SUB
+			if(B >> 31)
+				B *= -1;
 			*ALUresult = A - B;
 			if(*ALUresult == 0)
 				*Zero = 0;
@@ -80,18 +82,28 @@ int instruction_decode(unsigned op,struct_controls *controls)
 {
 	// If halt occurs return 1
 	// Else return 0
-
-	// All the control signals to account for
 	/*
-	ALUOp = 3;// L/S => 00, Beq => 01, Arithmetic => 1X
-	controls->ALUSrc;
-	Branch;
-	Jump;
-	controls->MemRead;
+	Non R-type functions to support
+	add imm
+	load word
+	store word
+	load upper immediate
+	branch on equal
+	set on less than immediate
+	set less than unsigned immediate
+	jump
+	*/
+	/*
+	All the control signals to account for
+	controls->ALUOp;// L/S => 00, Beq => 01, Arithmetic => 1X
+	controls->ALUSrc;// Selects second source for ALU
+	controls->Branch;
+	control->Jump;
+	control->MemRead;
 	controls->MemtoReg;
-	controls->MemWrite;
-	controls->RegDst;
-	controls->RegWrite;
+	control->MemWrite;
+	controls->RegDst; // Asserted for R-type
+	controls->RegWrite; // Asserted for R-type/Load
 	*/
 
 	//R-type instruction
@@ -99,28 +111,46 @@ int instruction_decode(unsigned op,struct_controls *controls)
 	{
 		controls->RegDst = 1; 
 		controls->RegWrite = 1;
+		controls->ALUSrc = 0;
+		return 0;
 	}
 	// J-type instruction
-	else if((op == 0b000010 || op == 0b000011)
+	else if(op == 0b000010 || op == 0b000011)
 	{
-		control->Jump = 1;
-		//control->branch = 1;
+		controls->Jump = 1;
+		return 0;
 	}
 	// I-type instruction
 	else
 	{
-		// if op == 0001XX branch
+		// branch: op == 0001XX
 		if((op >> 2) == 1)
-			control->Branch = 1;
-		
-
-
-
-
-
-
+		{
+			// beq check
+			if(op == 0b000100)
+			{
+				controls->ALUOp = 1;
+			}
+			controls->Branch = 1;
+			return 0;
+		}
+		// Store: op == 101XXX || op == 111XXX
+		if((op >> 3) == 5 || (op >> 3) == 7)
+		{
+			controls->MemWrite = 1;
+			controls->ALUOp = 1;
+			return 0;
+		}
+		// Load: op == 100XXX || op == 110XXX 
+		if((op >> 3) == 4 || (op >> 3) == 6)
+		{
+			controls->MemRead = 1;
+			controls->RegWrite = 1;
+			controls->ALUOp = 1;
+			return 0;
+		}
 	}
-	return 0;
+	return 1;
 }
 
 /* Read Register */
@@ -152,8 +182,10 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
 	// Illegal operation check
-	if(ALUOp > 4) return 1;
-	
+	if(ALUOp > 4) 
+	{
+		return 1;
+	}
 	// set Parameters for A, B, and ALUControl
 	unsigned A = data1;
 	unsigned B;
@@ -161,21 +193,28 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 	
 	// ALUsrc = 1 => read extended_value
 	if(ALUSrc == 1) 
+	{
 		B = extended_value;
+	}
 	else 
+	{
 		B = data2;
-	
+	}
+
 	// Add for Load / Store
 	if(ALUOp == 0)
+	{
 		ALUcontrol = 0b010;
-
+	}
 	// Sub for Beq	
 	else if(ALUOp == 1)
+	{
 		ALUcontrol = 0b110;
-
+	}
 	// look at funct for operation
 	else
-		if	   (funct == 0b0000)
+	{
+		if(funct == 0b0000)
 			ALUcontrol = 0b010;
 
 		else if(funct == 0b0010)
@@ -189,10 +228,10 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 		
 		else if(funct == 0b1010)
 			ALUcontrol = 0b111;
-		// We shouldn't get here
+		// funct code wasn't recognized if we get here
 		else
 			return 1;
-		
+	}	
 	
 	// in the end, call ALU function 
 	ALU(A, B, ALUcontrol, *ALUresult, *Zero);
