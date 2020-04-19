@@ -82,16 +82,26 @@ int instruction_decode(unsigned op,struct_controls *controls)
 {
 	// If halt occurs return 1
 	// Else return 0
-
+	/*
+	Non R-type functions to support
+	add imm
+	load word
+	store word
+	load upper immediate
+	branch on equal
+	set on less than immediate
+	set less than unsigned immediate
+	jump
+	*/
 	/*
 	All the control signals to account for
 	controls->ALUOp;// L/S => 00, Beq => 01, Arithmetic => 1X
 	controls->ALUSrc;// Selects second source for ALU
 	controls->Branch;
-	Jump;
-	MemRead;
+	control->Jump;
+	control->MemRead;
 	controls->MemtoReg;
-	MemWrite;
+	control->MemWrite;
 	controls->RegDst; // Asserted for R-type
 	controls->RegWrite; // Asserted for R-type/Load
 	*/
@@ -102,11 +112,13 @@ int instruction_decode(unsigned op,struct_controls *controls)
 		controls->RegDst = 1; 
 		controls->RegWrite = 1;
 		controls->ALUSrc = 0;
+		return 0;
 	}
 	// J-type instruction
 	else if(op == 0b000010 || op == 0b000011)
 	{
 		controls->Jump = 1;
+		return 0;
 	}
 	// I-type instruction
 	else
@@ -114,18 +126,20 @@ int instruction_decode(unsigned op,struct_controls *controls)
 		// branch: op == 0001XX
 		if((op >> 2) == 1)
 		{
+			// beq check
 			if(op == 0b000100)
 			{
-				controls->AlUOp = 1;
+				controls->ALUOp = 1;
 			}
-			//jump??
 			controls->Branch = 1;
+			return 0;
 		}
 		// Store: op == 101XXX || op == 111XXX
 		if((op >> 3) == 5 || (op >> 3) == 7)
 		{
 			controls->MemWrite = 1;
 			controls->ALUOp = 1;
+			return 0;
 		}
 		// Load: op == 100XXX || op == 110XXX 
 		if((op >> 3) == 4 || (op >> 3) == 6)
@@ -133,10 +147,10 @@ int instruction_decode(unsigned op,struct_controls *controls)
 			controls->MemRead = 1;
 			controls->RegWrite = 1;
 			controls->ALUOp = 1;
+			return 0;
 		}
-
 	}
-	return 0;
+	return 1;
 }
 
 /* Read Register */
