@@ -87,9 +87,9 @@ int instruction_decode(unsigned op,struct_controls *controls)
 	controls->ALUSrc;
 	Branch;
 	Jump;
-	controls->MemRead;
+	MemRead;
 	controls->MemtoReg;
-	controls->MemWrite;
+	MemWrite;
 	controls->RegDst;
 	controls->RegWrite;
 	*/
@@ -103,17 +103,27 @@ int instruction_decode(unsigned op,struct_controls *controls)
 	// J-type instruction
 	else if((op == 0b000010 || op == 0b000011)
 	{
-		control->Jump = 1;
+		controls->Jump = 1;
 		//control->branch = 1;
 	}
 	// I-type instruction
 	else
 	{
-		// if op == 0001XX branch
+		// branch: op == 0001XX
 		if((op >> 2) == 1)
-			control->Branch = 1;
-		
-
+		{
+			controls->Branch = 1;
+		}
+		// Store: op == 101XXX || op == 111XXX
+		if((op >> 3) == 5 || (op >> 3) == 7)
+		{
+			controls->memWrite = 1;
+		}
+		// Load: op == 100XXX || op == 110XXX 
+		if((op >> 3) == 4 || (op >> 3) == 6)
+		{
+			controls->memRead = 1;
+		}
 
 
 
